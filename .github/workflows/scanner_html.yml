@@ -28,3 +28,17 @@ jobs:
           scanners: "vuln"
           severity: "HIGH,CRITICAL"
           output: "index.html"
+
+      # This is a custom N8N webhook call to convert the HTML report to PDF 
+      # using gotenberg and slack api incoming webhook call
+      - name: Convert HTML to PDF via N8N
+        if: ${{ !cancelled() }}
+        run: |
+          curl -X POST "${{ secrets.N8N_WEBHOOK }}" \
+          -H "Authorization: Basic ${{ secrets.BASIC_AUTH_TOKEN }}" \
+          -F 'html=@./index.html' \
+          -F "metadata={ \
+          \"repo_url\":\"${{ github.server_url }}/${{ github.repository }}/tree/${{ github.ref_name }}\", \
+          \"branch\":\"${{ github.ref_name }}\", \
+          \"repo\":\"${{ github.repository }}\" \
+          };type=application/json" 
