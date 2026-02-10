@@ -1,12 +1,10 @@
-name: scan
+name: Scan HTML Output
 
 on:
   push:
     branches:
       - main
       - develop
-
-  pull_request:
 
 jobs:
   trivy:
@@ -23,6 +21,10 @@ jobs:
         with:
           scan-type: "fs"
           scan-ref: "."
-          format: "table"
+          format: "template"
+          template: "@$HOME/.local/bin/trivy-bin/contrib/html.tpl"
           exit-code: "1"
           ignore-unfixed: true
+          scanners: "vuln"
+          severity: "HIGH,CRITICAL"
+          output: "index.html"
