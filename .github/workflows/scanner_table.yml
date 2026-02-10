@@ -13,7 +13,7 @@ jobs:
     name: Trivy
     runs-on: ubuntu-24.04
     permissions:
-      contents: read # Required to checkout and read repo files
+      contents: write # Required to checkout, read, and write repo files
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,8 +23,10 @@ jobs:
         with:
           scan-type: "fs"
           scan-ref: "."
-          format: "table"
+          format: "github"
+          output: "dependency-results.sbom.json"
           exit-code: "1"
           ignore-unfixed: true
           scanners: "vuln"
           severity: "HIGH,CRITICAL"
+          github-pat: ${{ secrets.GH_PAT_TOKEN }} 
